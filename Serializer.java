@@ -11,11 +11,17 @@ import java.net.*;
 
 public class Serializer {
 	
+	static int SOCKETNUMBER = 1999;
+	
 	public static void main(String[] args) {
 		
 		
 		Object obj = userChoices();
 		Document xml = serialize(obj);	
+		System.out.printf("About to send document over network through socket %d\n"
+				+ "please make sure deserializer is running and then press ENTER\n", SOCKETNUMBER);
+		Scanner keyboard = new Scanner(System.in);
+		keyboard.nextLine();
 		sendDocument(1999);
 	}
 	
@@ -187,7 +193,7 @@ public class Serializer {
 			String fieldValue;
 			try {
 				fieldValue = fields[i].get(obj).toString();
-				System.out.println(fieldValue);
+//				System.out.println(fieldValue);
 			} catch (IllegalAccessException e) {
 				fieldValue = "ErrorAccessingString";
 			}
@@ -214,7 +220,6 @@ public class Serializer {
 			
 			while ((k = br.readLine()) != null) {
 				k += "\n"; //readLine() omits endline characters so add it back
-				System.out.printf(k);
 				dos.writeUTF(k);
 			}
 			

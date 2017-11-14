@@ -1,10 +1,13 @@
 import java.io.*;
 import java.net.*;
+import org.jdom2.*;
+import org.jdom2.input.SAXBuilder;
 
 public class Deserializer {
 
 	public static void main(String[] args) {
 		receiveDocument(1999);
+		Document xmlDocument = readDocument();
 
 	}
 	
@@ -31,6 +34,21 @@ public class Deserializer {
 			e.printStackTrace();
 			return false;
 		} 
+	}
+	
+	public static org.jdom2.Document readDocument() {
+		
+		Document document = new Document();
+		try {
+			SAXBuilder builder = new SAXBuilder();
+			document = builder.build(new File("deserialized.xml"));
+		} catch (JDOMException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return document;
 	}
 
 }

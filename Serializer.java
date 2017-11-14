@@ -14,10 +14,6 @@ public class Serializer {
 		
 		Object obj = createPrimitiveObject();
 		Document xml = serialize(obj);
-		
-		
-
-		
 	}
 	
 	public static Object createPrimitiveObject() {

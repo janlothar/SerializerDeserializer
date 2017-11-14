@@ -2,8 +2,8 @@
 public class PrimitiveClass {
 
 	boolean booleanPrimitive;
-	byte bytePrimitive;
 	char charPrimitive;
+	byte bytePrimitive;
 	short shortPrimitive;
 	int intPrimitive;
 	long longPrimitive;
@@ -13,8 +13,8 @@ public class PrimitiveClass {
 	public PrimitiveClass() {
 		
 		booleanPrimitive = true;
-		bytePrimitive = 8;
 		charPrimitive = 'z';
+		bytePrimitive = 8;
 		shortPrimitive = 16;
 		intPrimitive = 32;
 		longPrimitive = 64;

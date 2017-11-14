@@ -7,6 +7,7 @@ import org.jdom2.*;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -28,7 +29,7 @@ public class Serializer {
 //				+ "\t2. An object that contains a reference to another object\n"
 //				+ "\t3. An object that contains an array of primitives\n"
 //				+ "\t4. An object that contains an array of object references\n"
-//				+ "\t5. An object that uses an instance of Java's collection classes to refer to several other objects"
+//				+ "\t5. An object that uses an instance of Java's collection classes to refer to several other objects\n
 				);
 			
 		Scanner keyboard = new Scanner(System.in);
@@ -36,9 +37,7 @@ public class Serializer {
 		
 		switch (choice) {
 		case 1:
-			object = new PrimitiveClass();
-			object = editPrimitiveClass(object);
-			
+			object = editPrimitiveClass(new PrimitiveClass());		
 			break;
 
 		default:
@@ -50,11 +49,98 @@ public class Serializer {
 		return object;
 	}
 	
-	public static Object editPrimitiveClass(Object object) {
+	public static Object editPrimitiveClass(PrimitiveClass primitiveClass) {
 		
-		PrimitiveClass primitiveClass = new PrimitiveClass();
+		boolean editing = true;
 		
-		return new PrimitiveClass();
+		while (editing) {
+			System.out.printf("Would you like to edit any of the fields?\n"
+					+ "\t1. boolean booleanPrimitive\t= %s\n"
+					+ "\t2. char charPrimitive\t\t= %s\n"
+					+ "\t3. byte bytePrimitive\t\t= %d\n"
+					+ "\t4. short shortPrimitive\t\t= %d\n"
+					+ "\t5. int intPrimitive\t\t= %d\n"
+					+ "\t6. long longPrimitive\t\t= %d\n"
+					+ "\t7. float floatPrimitive\t\t= %f\n"
+					+ "\t8. double doublePrimitive\t= %f\n"
+					+ "\t9. Done\n"
+					, primitiveClass.booleanPrimitive
+					, primitiveClass.charPrimitive
+					, primitiveClass.bytePrimitive
+					, primitiveClass.shortPrimitive
+					, primitiveClass.intPrimitive
+					, primitiveClass.longPrimitive
+					, primitiveClass.floatPrimitive
+					, primitiveClass.doublePrimitive
+					);
+			
+			Scanner keyboard = new Scanner(System.in);
+			int choice = 0;
+			System.out.printf("Choose: ");
+			if (keyboard.hasNextInt()) {
+				choice = keyboard.nextInt();
+				System.out.printf("Input: ");
+			}
+			
+			switch (choice) {
+			case 1:
+				if (keyboard.hasNextBoolean())
+					primitiveClass.booleanPrimitive = keyboard.nextBoolean();
+				else
+					System.out.println("Invalid input: not a valid boolean");
+				break;
+			case 2:
+				if (keyboard.hasNext(Pattern.compile(".")))
+					primitiveClass.charPrimitive = keyboard.next().charAt(0);
+				else
+					System.out.println("Invalid input: not a valid char");
+				break;
+			case 3:
+				if (keyboard.hasNextByte())
+					primitiveClass.bytePrimitive = keyboard.nextByte();
+				else
+					System.out.println("Invalid input: not a valid byte");
+				break;
+			case 4:
+				if (keyboard.hasNextShort())
+					primitiveClass.shortPrimitive = keyboard.nextShort();
+				else
+					System.out.println("Invalid input: not a valid short");
+				break;
+			case 5:
+				if (keyboard.hasNextInt())
+					primitiveClass.intPrimitive = keyboard.nextInt();
+				else
+					System.out.println("Invalid input: not a valid int");
+				break;
+			case 6:
+				if (keyboard.hasNextLong())
+					primitiveClass.longPrimitive = keyboard.nextLong();
+				else
+					System.out.println("Invalid input: not a valid long");
+				break;
+			case 7:
+				if (keyboard.hasNextFloat())
+					primitiveClass.floatPrimitive = keyboard.nextFloat();
+				else
+					System.out.println("Invalid input: not a valid float");
+				break;
+			case 8:
+				if (keyboard.hasNextDouble())
+					primitiveClass.doublePrimitive = keyboard.nextDouble();
+				else
+					System.out.println("Invalid input: not a valid double");
+				break;
+			case 9:
+				editing = false;
+				break;
+			default:
+				System.out.println("Invalid Choice");
+				break;
+			}
+		}
+			
+		return primitiveClass;
 	}
 	
 	public static org.jdom2.Document serialize(Object obj){

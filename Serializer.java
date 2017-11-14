@@ -6,17 +6,53 @@ import java.io.StringWriter;
 import org.jdom2.*;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Serializer {
 	
 	public static void main(String[] args) {
 		
-		Object obj = createPrimitiveObject();
-		Document xml = serialize(obj);
+		
+		Object obj = userChoices();
+		Document xml = serialize(obj);	
 	}
 	
-	public static Object createPrimitiveObject() {
+	public static Object userChoices() {
+		
+		Object object = new Object();
+		
+		System.out.printf("Select what kind of object you'd like to create:\n"
+				+ "\t1. A simple object with only primitives for variables\n"
+//				+ "\t2. An object that contains a reference to another object\n"
+//				+ "\t3. An object that contains an array of primitives\n"
+//				+ "\t4. An object that contains an array of object references\n"
+//				+ "\t5. An object that uses an instance of Java's collection classes to refer to several other objects"
+				);
+			
+		Scanner keyboard = new Scanner(System.in);
+		int choice = keyboard.nextInt();
+		
+		switch (choice) {
+		case 1:
+			object = new PrimitiveClass();
+			object = editPrimitiveClass(object);
+			
+			break;
+
+		default:
+			System.out.println("Invalid choice");
+			System.exit(0);
+			break;
+		}
+		
+		return object;
+	}
+	
+	public static Object editPrimitiveClass(Object object) {
+		
+		PrimitiveClass primitiveClass = new PrimitiveClass();
 		
 		return new PrimitiveClass();
 	}

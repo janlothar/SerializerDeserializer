@@ -2,13 +2,37 @@ import java.io.*;
 import java.net.*;
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 
 public class Deserializer {
 
 	public static void main(String[] args) {
 		receiveDocument(1999);
 		Document xmlDocument = readDocument();
+		
+//		DEBUG CHECK PRODUCED DOCUMENT
+//		try {
+//			XMLOutputter xmlOutput = new XMLOutputter(Format.getPrettyFormat());
+//			xmlOutput.output(xmlDocument, new FileOutputStream(new File("TEST.xml")));
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+		
+		deserialize(xmlDocument);
 
+	}
+	
+	public static void deserialize(org.jdom2.Document document) {
+		
+		Document readDoc = document;
+		
+		System.out.println("Root: " + readDoc.getRootElement());
+		
+		// Gets the text found between the name tags
+		
+		System.out.println("Value: " + readDoc.getRootElement().getChild("object").getChild("field").getChildText("value"));
+		
 	}
 	
 	public static boolean receiveDocument(int socketNumber) {

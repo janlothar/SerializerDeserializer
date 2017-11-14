@@ -9,6 +9,7 @@ import org.jdom2.output.XMLOutputter;
 
 
 public class Serializer {
+	
 	public static void main(String[] args) {
 		
 		Object obj = createPrimitiveObject();
@@ -29,15 +30,34 @@ public class Serializer {
 		Document doc = new Document();
 		
 		//set root
-		Element theRoot = new Element("serialized");
-		doc.setRootElement(theRoot);
+		Element rootElement = new Element("serialized");
+		doc.setRootElement(rootElement);
+		
+		Element testElement = createPrimitiveClassElement(obj);
+		rootElement.addContent(testElement);
+		
+		
+		//write to file for viewing
+		try {
+			XMLOutputter xmlOutput = new XMLOutputter(Format.getPrettyFormat());
+			xmlOutput.output(doc, new FileOutputStream(new File("serialize.xml")));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+
+		
+		return doc;
+	}
+	
+	public static org.jdom2.Element createPrimitiveClassElement(Object obj){
 		
 		//create object element with class name and id attribute
-		Element object = new Element("object");
+		Element objectElement = new Element("object");
 		Attribute className = new Attribute("name", obj.getClass().getName());
 		Attribute classID = new Attribute("id", "WIP");
-		object.setAttribute(className).setAttribute(classID);
-		theRoot.addContent(object);
+		objectElement.setAttribute(className).setAttribute(classID);
 		
 		//add fields
 		Field[] fields = obj.getClass().getDeclaredFields();
@@ -57,21 +77,10 @@ public class Serializer {
 			Element value = new Element("value");
 			value.addContent(fieldValue);
 			field.addContent(value);
-			object.addContent(field);
+			objectElement.addContent(field);
 			
 		}
 		
-		//write to file for viewing
-		try {
-			XMLOutputter xmlOutput = new XMLOutputter(Format.getPrettyFormat());
-			xmlOutput.output(doc, new FileOutputStream(new File("serialize.xml")));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		
-
-		
-		return doc;
+		return objectElement;
 	}
 }

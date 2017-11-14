@@ -7,11 +7,13 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.IdentityHashMap;
 import java.net.*;
 
 public class Serializer {
 	
 	static int SOCKETNUMBER = 1999;
+	static IdentityHashMap IDMap = new IdentityHashMap<>();
 	
 	public static void main(String[] args) {
 		
@@ -44,7 +46,8 @@ public class Serializer {
 		
 		switch (choice) {
 		case 1:
-			object = editPrimitiveClass(new PrimitiveClass());		
+			object = editPrimitiveClass(new PrimitiveClass());
+			addToMap(object);
 			break;
 
 		default:
@@ -181,7 +184,7 @@ public class Serializer {
 		//create object element with class name and id attribute
 		Element objectElement = new Element("object");
 		Attribute className = new Attribute("name", obj.getClass().getName());
-		Attribute classID = new Attribute("id", "WIP");
+		Attribute classID = new Attribute("id", IDMap.get(obj).toString());
 		objectElement.setAttribute(className).setAttribute(classID);
 		
 		//add fields
@@ -230,6 +233,13 @@ public class Serializer {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
+		}
+	}
+	
+	public static void addToMap(Object object) {
+		
+		if (IDMap.get(object) == null) {
+			IDMap.put(object, IDMap.size());
 		}
 	}
 }

@@ -17,13 +17,18 @@ public class Serializer {
 	
 	public static void main(String[] args) {
 		
-		
+		//create objects as per user choice
 		Object obj = userChoices();
+		//serialize
 		Document xml = serialize(obj);	
+		//write to file for viewing
+		writeDocument(xml);
+		//prompt user to start deserializer
 		System.out.printf("About to send document over network through socket %d\n"
 				+ "please make sure deserializer is running and then press ENTER\n", SOCKETNUMBER);
 		Scanner keyboard = new Scanner(System.in);
 		keyboard.nextLine();
+		//send document
 		sendDocument(1999);
 	}
 	
@@ -164,19 +169,16 @@ public class Serializer {
 		Element testElement = createPrimitiveClassElement(obj);
 		rootElement.addContent(testElement);
 		
-		
-		//write to file for viewing
+		return doc;
+	}
+
+	private static void writeDocument(Document doc) {
 		try {
 			XMLOutputter xmlOutput = new XMLOutputter(Format.getPrettyFormat());
 			xmlOutput.output(doc, new FileOutputStream(new File("serialize.xml")));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
-
-		
-		return doc;
 	}
 	
 	public static org.jdom2.Element createPrimitiveClassElement(Object obj){

@@ -1,8 +1,5 @@
 import java.lang.reflect.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import org.jdom2.*;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
@@ -10,6 +7,7 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.net.*;
 
 public class Serializer {
 	
@@ -18,6 +16,7 @@ public class Serializer {
 		
 		Object obj = userChoices();
 		Document xml = serialize(obj);	
+		sendDocument(1999);
 	}
 	
 	public static Object userChoices() {
@@ -31,6 +30,8 @@ public class Serializer {
 //				+ "\t4. An object that contains an array of object references\n"
 //				+ "\t5. An object that uses an instance of Java's collection classes to refer to several other objects\n
 				);
+		
+		System.out.printf("Choose: ");
 			
 		Scanner keyboard = new Scanner(System.in);
 		int choice = keyboard.nextInt();
@@ -200,5 +201,28 @@ public class Serializer {
 		}
 		
 		return objectElement;
+	}
+	
+	//returns true if successful
+	public static boolean sendDocument(int socketNumber) {
+		
+		try {
+			Socket s = new Socket("localhost", socketNumber);
+			BufferedReader br = new BufferedReader(new FileReader("serialize.xml"));
+			String k;
+			DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+			
+			while ((k = br.readLine()) != null) {
+				dos.writeUTF(k);
+			}
+			
+			s.close();
+			br.close();
+			return true;
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 }

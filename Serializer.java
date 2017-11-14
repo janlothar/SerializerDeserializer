@@ -213,6 +213,8 @@ public class Serializer {
 			DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 			
 			while ((k = br.readLine()) != null) {
+				k += "\n"; //readLine() omits endline characters so add it back
+				System.out.printf(k);
 				dos.writeUTF(k);
 			}
 			

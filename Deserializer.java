@@ -25,10 +25,12 @@ public class Deserializer {
 			ss.close();
 			fos.close();
 			return true;
+		} catch (EOFException e) {
+			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
-		}
+		} 
 	}
 
 }

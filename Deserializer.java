@@ -43,7 +43,6 @@ public class Deserializer {
 		
 		for (int i = 0; i < fieldValues.length; i++) {
 			fieldValues[i] = fieldSerialized.get(i).getChildText("value");
-			System.out.println(fieldValues[i]);
 		}
 		
 		primitiveclass.booleanPrimitive = Boolean.parseBoolean(fieldValues[0]);

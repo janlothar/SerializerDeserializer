@@ -7,6 +7,7 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.IdentityHashMap;
 import java.net.*;
 
@@ -18,27 +19,31 @@ public class Serializer {
 	public static void main(String[] args) {
 		
 		//create objects as per user choice
-		Object obj = userChoices();
+		List<Object> objList = userChoices();
+		//add to identity map
+		for (Object obj : objList) {
+			addToMap(obj);
+		}
 		//serialize
-		Document xml = serialize(obj);	
+		Document xml = serialize(objList);	
 		//write to file for viewing
 		writeDocument(xml);
 		//prompt user to start deserializer
 		System.out.printf("About to send document over network through socket %d\n"
-				+ "please make sure deserializer is running and then press ENTER\n", SOCKETNUMBER);
+				+ "please make sure deserializer is running and then press enter\n(ENTER)\n", SOCKETNUMBER);
 		Scanner keyboard = new Scanner(System.in);
 		keyboard.nextLine();
 		//send document
-		sendDocument(1999);
+//		sendDocument(1999);
 	}
 	
-	public static Object userChoices() {
+	public static List<Object> userChoices() {
 		
-		Object object = new Object();
+		List<Object> objectList = new ArrayList<Object>();
 		
 		System.out.printf("Select what kind of object you'd like to create:\n"
 				+ "\t1. A simple object with only primitives for variables\n"
-//				+ "\t2. An object that contains a reference to another object\n"
+				+ "\t2. An object that contains a reference to another object\n"
 //				+ "\t3. An object that contains an array of primitives\n"
 //				+ "\t4. An object that contains an array of object references\n"
 //				+ "\t5. An object that uses an instance of Java's collection classes to refer to several other objects\n
@@ -51,17 +56,24 @@ public class Serializer {
 		
 		switch (choice) {
 		case 1:
-			object = editPrimitiveClass(new PrimitiveClass());
-			addToMap(object);
+			objectList.add(editPrimitiveClass(new PrimitiveClass()));
 			break;
-
+			
+		case 2:
+			System.out.printf("Creating object with reference to another class\nPress enter to configure referenced class\n(ENTER)\n");
+			keyboard = new Scanner(System.in);
+			keyboard.nextLine();
+			objectList.add(editPrimitiveClass(new PrimitiveClass()));
+			objectList.add(new ObjectReferenceClass(objectList.get(0)));
+			break;
+			
 		default:
 			System.out.println("Invalid choice");
 			System.exit(0);
 			break;
 		}
 		
-		return object;
+		return objectList;
 	}
 	
 	public static Object editPrimitiveClass(PrimitiveClass primitiveClass) {
@@ -158,7 +170,7 @@ public class Serializer {
 		return primitiveClass;
 	}
 	
-	public static org.jdom2.Document serialize(Object obj){
+	public static org.jdom2.Document serialize(List<Object> objList){
 		
 		Document doc = new Document();
 		
@@ -166,8 +178,10 @@ public class Serializer {
 		Element rootElement = new Element("serialized");
 		doc.setRootElement(rootElement);
 		
-		Element testElement = createPrimitiveClassElement(obj);
-		rootElement.addContent(testElement);
+		for (Object obj : objList) {
+			Element testElement = createPrimitiveClassElement(obj);
+			rootElement.addContent(testElement);
+		}
 		
 		return doc;
 	}

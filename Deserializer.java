@@ -1,15 +1,21 @@
 import java.io.*;
 import java.net.*;
+import java.util.List;
+
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 public class Deserializer {
+	
+	int SOCKETNUMBER = 1999;
 
 	public static void main(String[] args) {
-		receiveDocument(1999);
+		
+//		receiveDocument(SOCKETNUMBER);
 		Document xmlDocument = readDocument();
+		Object object = deserialize(xmlDocument);
 		
 //		DEBUG CHECK PRODUCED DOCUMENT
 //		try {
@@ -18,20 +24,36 @@ public class Deserializer {
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //		}
-		
-		deserialize(xmlDocument);
 
 	}
 	
-	public static void deserialize(org.jdom2.Document document) {
+	public static Object deserialize(org.jdom2.Document document) {
 		
-		Document readDoc = document;
+		Element rootSerialized = document.getRootElement();
 		
-		System.out.println("Root: " + readDoc.getRootElement());
+		List<Element> objectSerialized = rootSerialized.getChildren();
 		
-		// Gets the text found between the name tags
+		List<Element> fieldSerialized = objectSerialized.get(0).getChildren();
 		
-		System.out.println("Value: " + readDoc.getRootElement().getChild("object").getChild("field").getChildText("value"));
+		String[] fieldValues = new String[fieldSerialized.size()];
+		
+		PrimitiveClass primitiveclass = new PrimitiveClass();
+		
+		for (int i = 0; i < fieldValues.length; i++) {
+			fieldValues[i] = fieldSerialized.get(i).getChildText("value");
+			System.out.println(fieldValues[i]);
+		}
+		
+		primitiveclass.booleanPrimitive = Boolean.parseBoolean(fieldValues[0]);
+		primitiveclass.charPrimitive = fieldValues[1].charAt(0);
+		primitiveclass.bytePrimitive = Byte.parseByte(fieldValues[2]);
+		primitiveclass.shortPrimitive = Short.parseShort(fieldValues[3]);
+		primitiveclass.intPrimitive = Integer.parseInt(fieldValues[4]);
+		primitiveclass.longPrimitive = Long.parseLong(fieldValues[5]);
+		primitiveclass.floatPrimitive = Float.parseFloat(fieldValues[6]);
+		primitiveclass.doublePrimitive = Double.parseDouble(fieldValues[7]);
+		
+		return primitiveclass;
 		
 	}
 	

@@ -181,8 +181,25 @@ public class Serializer {
 		doc.setRootElement(rootElement);
 		
 		for (Object obj : objList) {
-			Element testElement = createPrimitiveClassElement(obj);
-			rootElement.addContent(testElement);
+			Element objectElement;
+			String className = obj.getClass().getName();
+			switch (className) {
+			case "PrimitiveClass":
+				objectElement = createPrimitiveClassElement(obj);
+				break;
+			
+			case "ObjectReferenceClass":
+				objectElement = createObjectReferenceClassElement(obj);
+				break;
+
+			default:
+				objectElement = createPrimitiveClassElement(obj);
+				System.out.println("Error creating element");
+				System.exit(0);
+				break;
+			}
+			
+			rootElement.addContent(objectElement);
 		}
 		
 		return doc;
@@ -222,6 +239,37 @@ public class Serializer {
 			field.setAttribute("name", fieldName).setAttribute("declaringclass", declaringClass);
 			Element value = new Element("value");
 			value.addContent(fieldValue);
+			field.addContent(value);
+			objectElement.addContent(field);
+			
+		}
+		
+		return objectElement;
+	}
+	
+	public static org.jdom2.Element createObjectReferenceClassElement(Object obj){
+		
+		Element objectElement = new Element("object");
+		Attribute className = new Attribute("name", obj.getClass().getName());
+		Attribute classID = new Attribute("id", IDMap.get(obj).toString());
+		objectElement.setAttribute(className).setAttribute(classID);
+		
+		//add fields
+		Field[] fields = obj.getClass().getDeclaredFields();
+		for (int i = 0; i < fields.length; i++) {
+			fields[i].setAccessible(true);
+			String fieldName = fields[i].getName();
+			String declaringClass = fields[i].getDeclaringClass().getName();
+			Object fieldValue;
+			try {
+				fieldValue = fields[i].get(obj);
+			} catch (IllegalAccessException e) {
+				fieldValue = "ErrorAccessingString";
+			}
+			Element field = new Element("field");
+			field.setAttribute("name", fieldName).setAttribute("declaringclass", declaringClass);
+			Element value = new Element("reference");
+			value.addContent(IDMap.get(fieldValue).toString());
 			field.addContent(value);
 			objectElement.addContent(field);
 			

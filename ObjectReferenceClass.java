@@ -1,9 +1,9 @@
 
 public class ObjectReferenceClass {
 
-	Object reference;
+	Object objectReference;
 	
 	public ObjectReferenceClass(Object ref) {
-		reference = ref;
+		objectReference = ref;
 	}
 }

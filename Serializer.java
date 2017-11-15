@@ -56,14 +56,14 @@ public class Serializer {
 		
 		switch (choice) {
 		case 1:
-			objectList.add(editPrimitiveClass(new PrimitiveClass()));
+			objectList.add(createPrimitiveClass());
 			break;
 			
 		case 2:
 			System.out.printf("Creating object with reference to another class\nPress enter to configure referenced class\n(ENTER)\n");
 			keyboard = new Scanner(System.in);
 			keyboard.nextLine();
-			objectList.add(editPrimitiveClass(new PrimitiveClass()));
+			objectList.add(createPrimitiveClass());
 			objectList.add(new ObjectReferenceClass(objectList.get(0)));
 			break;
 			
@@ -76,7 +76,9 @@ public class Serializer {
 		return objectList;
 	}
 	
-	public static Object editPrimitiveClass(PrimitiveClass primitiveClass) {
+	public static Object createPrimitiveClass() {
+		
+		PrimitiveClass primitiveClass = new PrimitiveClass();
 		
 		boolean editing = true;
 		

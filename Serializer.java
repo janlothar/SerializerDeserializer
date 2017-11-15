@@ -44,7 +44,7 @@ public class Serializer {
 		System.out.printf("Select what kind of object you'd like to create:\n"
 				+ "\t1. A simple object with only primitives for variables\n"
 				+ "\t2. An object that contains a reference to another object\n"
-//				+ "\t3. An object that contains an array of primitives\n"
+				+ "\t3. An object that contains an array of primitives\n"
 //				+ "\t4. An object that contains an array of object references\n"
 //				+ "\t5. An object that uses an instance of Java's collection classes to refer to several other objects\n
 				);
@@ -65,6 +65,13 @@ public class Serializer {
 			keyboard.nextLine();
 			objectList.add(createPrimitiveClass());
 			objectList.add(new ObjectReferenceClass(objectList.get(0)));
+			break;
+			
+		case 3:
+			System.out.println("Enter a line of characters. These characters will be added to the char array");
+			keyboard = new Scanner(System.in);
+			String input = keyboard.nextLine();
+			objectList.add(new PrimitiveArrayClass(input.toCharArray()));
 			break;
 			
 		default:
@@ -191,6 +198,10 @@ public class Serializer {
 			case "ObjectReferenceClass":
 				objectElement = createObjectReferenceClassElement(obj);
 				break;
+				
+			case "PrimitiveArrayClass":
+				objectElement = createPrimitiveArrayClassElement(obj);
+				break;
 
 			default:
 				objectElement = createPrimitiveClassElement(obj);
@@ -271,6 +282,46 @@ public class Serializer {
 			Element value = new Element("reference");
 			value.addContent(IDMap.get(fieldValue).toString());
 			field.addContent(value);
+			objectElement.addContent(field);
+			
+		}
+		
+		return objectElement;
+	}
+	
+	public static org.jdom2.Element createPrimitiveArrayClassElement(Object obj){
+		
+		Element objectElement = new Element("object");
+		Attribute className = new Attribute("name", obj.getClass().getName());
+		Attribute classID = new Attribute("id", IDMap.get(obj).toString());
+		objectElement.setAttribute(className).setAttribute(classID);
+		
+		//add fields
+		Field[] fields = obj.getClass().getDeclaredFields();
+		for (int i = 0; i < fields.length; i++) {
+			fields[i].setAccessible(true);
+			String fieldName = fields[i].getName();
+			String declaringClass = fields[i].getDeclaringClass().getName();
+			Object fieldArray;
+			try {
+				fieldArray = fields[i].get(obj);
+			} catch (IllegalAccessException e) {
+				fieldArray = "ErrorAccessingString";
+			}
+			
+			Element field = new Element("field");
+			field.setAttribute("name", fieldName).setAttribute("declaringclass", declaringClass).setAttribute("length", Integer.toString(Array.getLength(fieldArray)));
+			
+			Object fieldArrayElement;
+	
+		    for(int j=0 ;j<Array.getLength(fieldArray); j++) {
+		        fieldArrayElement = Array.get(fieldArray, j);
+			    Element value = new Element("value");
+				value.addContent(fieldArrayElement.toString());
+				field.addContent(value);
+		    }
+			
+			
 			objectElement.addContent(field);
 			
 		}

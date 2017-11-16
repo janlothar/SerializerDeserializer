@@ -45,7 +45,7 @@ public class Serializer {
 				+ "\t1. A simple object with only primitives for variables\n"
 				+ "\t2. An object that contains a reference to another object\n"
 				+ "\t3. An object that contains an array of primitives\n"
-//				+ "\t4. An object that contains an array of object references\n"
+				+ "\t4. An object that contains an array of object references\n"
 //				+ "\t5. An object that uses an instance of Java's collection classes to refer to several other objects\n
 				);
 		
@@ -60,7 +60,8 @@ public class Serializer {
 			break;
 			
 		case 2:
-			System.out.printf("Creating object with reference to another class\nPress enter to configure referenced class\n(ENTER)\n");
+			System.out.printf("Creating object with reference to another class\n"
+					+ "Press enter to configure referenced class\n(ENTER)\n");
 			keyboard = new Scanner(System.in);
 			keyboard.nextLine();
 			objectList.add(createReferenceObject());
@@ -71,6 +72,18 @@ public class Serializer {
 			objectList.add(createPrimitiveArrayClass());
 			break;
 			
+		case 4:
+			System.out.printf("Creating object array with references to another class\n"
+					+ "Press enter to configure referenced classes\n(ENTER)\n");
+			keyboard = new Scanner(System.in);
+			keyboard.nextLine();
+			Object[] objectArray = createObjectArray();
+			objectList.add(objectArray);
+			for (int i = 0; i < objectArray.length; i++) {
+				objectList.add(objectArray[i]);
+			}
+			break;
+			
 		default:
 			System.out.println("Invalid choice");
 			System.exit(0);
@@ -79,6 +92,18 @@ public class Serializer {
 		
 		
 		return objectList;
+	}
+	
+	public static Object[] createObjectArray() {
+		
+		System.out.println("How many objects would you like to create?");
+		Scanner keyboard = new Scanner(System.in);
+		int arrayLength = keyboard.nextInt();
+		Object[] objectArray = new Object[arrayLength];
+		for (int i = 0; i < objectArray.length; i++) {
+			objectArray[i] = createReferenceObject();
+		}
+		return objectArray;
 	}
 	
 	public static Object createReferenceObject() {

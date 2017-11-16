@@ -219,42 +219,11 @@ public class Deserializer {
 		
 		//get class details
 		String className = getClassName(classToInspect);
-		String superclassName = getSuperclassName(classToInspect);
-		String[] interfaceNames = getInterfaceNames(classToInspect);
-		String[] methodDetails = getMethodDetails(classToInspect);
-		String[] constructorDetails = getConstructorDetails(classToInspect);
 		String[] fieldDetails = getFieldDetails(obj);
 		
 		//print class details
 		System.out.println("Class name: " + className);
-		System.out.println("Superclass name: " + superclassName);
-		//print interfaces
-		System.out.println("\nInterfaces of Class:");
-		if (interfaceNames.length == 0) {
-			System.out.println("\tNone");
-		} else {
-			for(int i=0; i<interfaceNames.length; i++) {
-				System.out.println("\t" + interfaceNames[i]);
-			}
-		}
-		//print method details
-		System.out.println("\nMethods: ");
-		if (methodDetails.length == 0) {
-			System.out.println("\tNone");
-		} else {
-			for (int i = 0; i < methodDetails.length; i++) {
-				System.out.println("\tmethod " + (i+1) + ":\t" + methodDetails[i]);
-			}
-		}
-		//print constructor details
-		System.out.println("\nConstructors: ");
-		if (constructorDetails.length == 0) {
-			System.out.println("\tNone");
-		} else {
-			for (int i = 0; i < constructorDetails.length; i++) {
-				System.out.println("\tconstructor " + (i+1) + ":\t" + constructorDetails[i]);
-			}
-		}
+
 		//print field details
 		System.out.println("\nFields: ");
 		if (fieldDetails.length == 0) {
@@ -272,70 +241,6 @@ public class Deserializer {
 		String className = toInspect.getName();
 		return className;
 	}
-	
-	
-	public static String getSuperclassName(Class toInspect) {
-		
-		Class superclass = toInspect.getSuperclass();
-		String superclassName = superclass.getName();
-		return superclassName;
-	}
-	
-	
-	public static String[] getInterfaceNames(Class toInspect) {
-		
-		Class[] interfaces = toInspect.getInterfaces();
-		String[] interfaceNames = new String[interfaces.length];
-		
-		if (interfaceNames.length == 0) {
-			return interfaceNames;
-		} else {
-			for(int i=0; i<interfaces.length; i++) {
-				interfaceNames[i] = interfaces[i].getName();
-			}
-			return interfaceNames;
-		}
-	}
-	
-	
-	public static String[] getMethodDetails(Class toInspect) {
-
-		Method[] methods = toInspect.getDeclaredMethods();
-		String[] methodDetails = new String[methods.length];
-		
-		for (int i=0; i<methods.length; i++) {
-			methods[i].setAccessible(true);
-			String modifierName = getMethodModiferNames(methods[i]);
-			String returnType = getMethodReturnType(methods[i]);
-			String methodName = methods[i].getName();
-			String[] parameterNames = getMethodParameterNames(methods[i]);
-			String formattedParameterNames = formatParameterNames(parameterNames);
-			String[] exceptionNames = getMethodExceptionNames(methods[i]);
-			String formattedExceptionNames = formatExceptionNames(exceptionNames);
-			methodDetails[i] = (modifierName + " " + returnType + " " + methodName + formattedParameterNames + " throws " + formattedExceptionNames);
-		}
-		
-		return methodDetails;
-	}
-	
-	
-	public static String[] getConstructorDetails(Class toInspect) {
-		
-		Constructor[] constructors = toInspect.getDeclaredConstructors();
-		String[] constructorDetails = new String[constructors.length];
-		
-		for (int i = 0; i < constructors.length; i++) {
-			constructors[i].setAccessible(true);
-			String modifierName = getConstructorModifierNames(constructors[i]);
-			String constructorName = constructors[i].getName();
-			String[] parameterNames = getConstructorParameterNames(constructors[i]);
-			String parameterNamesformatted = formatParameterNames(parameterNames);
-			constructorDetails[i] = (modifierName + " " + constructorName + parameterNamesformatted);			
-		}
-		
-		return constructorDetails;
-	}
-	
 	
 	public static String[] getFieldDetails(Object toInspect) {
 		

@@ -38,14 +38,17 @@ public class Serializer {
 		switch (choice) {
 		case 1:
 			writeDocument(xml);
+			System.out.println("Saved file");
 			break;
 		case 2:
 			writeDocument(xml);
 			sendDocument(SOCKETNUMBER);
+			System.out.println("Saved file and sent");
 			break;
 		default:
 			System.out.println("Invalid choice, defaulting to saving to file");
 			writeDocument(xml);
+			System.out.println("Saved file");
 			break;
 		}
 	}
@@ -79,8 +82,8 @@ public class Serializer {
 			keyboard.nextLine();
 			Object refObject = createReferenceObject();
 			Object obj = new ObjectReferenceClass(refObject);
-			objectList.add(obj);
 			objectList.add(refObject);
+			objectList.add(obj);
 			break;
 			
 		case 3:
@@ -94,10 +97,10 @@ public class Serializer {
 			keyboard.nextLine();
 			Object[] objectArray = createObjectArray();
 			Object refArrClass = new ObjectReferenceArrayClass(objectArray);
-			objectList.add(refArrClass);
 			for (int i = 0; i < objectArray.length; i++) {
 				objectList.add(objectArray[i]);
 			}
+			objectList.add(refArrClass);
 			break;
 			
 		case 5:
@@ -107,8 +110,8 @@ public class Serializer {
 			keyboard.nextLine();
 			Collection<Object> objectCollection = Arrays.asList(createObjectArray());			
 			Object refColClass = new ObjectReferenceCollectionClass(objectCollection);
-			objectList.add(refColClass);
 			objectList.addAll(objectCollection);
+			objectList.add(refColClass);
 			break;
 			
 		default:

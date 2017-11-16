@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.lang.reflect.*;
+import java.util.IdentityHashMap;
 import java.util.List;
 
 import org.jdom2.*;
@@ -11,11 +12,12 @@ import org.jdom2.output.XMLOutputter;
 public class Deserializer {
 	
 	static int SOCKETNUMBER = 1999;
+	static IdentityHashMap IDMap = new IdentityHashMap();
 
 	public static void main(String[] args) {
 		
 		System.out.println("Deserializer running. Waiting for Serializer to send document...");
-		receiveDocument(SOCKETNUMBER);
+//		receiveDocument(SOCKETNUMBER);
 		Document xmlDocument = readDocument();
 		System.out.println("Document received. Deserializing...");
 		Object object = deserialize(xmlDocument);
@@ -29,7 +31,48 @@ public class Deserializer {
 		
 		List<Element> objectSerialized = rootSerialized.getChildren();
 		
-		List<Element> fieldSerialized = objectSerialized.get(0).getChildren();
+		Object deserializedObject = new Object();
+		
+		for(Element objectElement : objectSerialized) {
+			String objectType = objectElement.getAttributeValue("name");
+			
+			switch (objectType) {
+			case "PrimitiveClass":
+				deserializedObject = deserializePrimitiveClass(objectElement);
+				break;
+				
+			case "ObjectReferenceClass":
+				deserializedObject = deserializeObjectReferenceClass(objectElement);
+				break;
+			default:
+				return deserializedObject;
+			}
+		}
+		
+		return deserializedObject;
+		
+	}
+	
+	public static Object deserializeObjectReferenceClass(Element objectElement) {
+		
+		Element fieldSerialized = objectElement.getChild("field");
+		
+		int idValue = Integer.parseInt(objectElement.getAttributeValue("id"));
+		
+		int refValue = Integer.parseInt(fieldSerialized.getChildText("reference"));
+		
+		ObjectReferenceClass objectRefClass = new ObjectReferenceClass(IDMap.get(refValue));
+		
+		IDMap.put(objectRefClass, idValue);
+		
+		return objectRefClass;
+	}
+	
+	public static Object deserializePrimitiveClass(Element objectElement) {
+		
+		List<Element> fieldSerialized = objectElement.getChildren();
+		
+		int idValue = Integer.parseInt(objectElement.getAttributeValue("id"));
 		
 		String[] fieldValues = new String[fieldSerialized.size()];
 		
@@ -48,8 +91,9 @@ public class Deserializer {
 		primitiveclass.floatPrimitive = Float.parseFloat(fieldValues[6]);
 		primitiveclass.doublePrimitive = Double.parseDouble(fieldValues[7]);
 		
-		return primitiveclass;
+		IDMap.put(primitiveclass, idValue);
 		
+		return primitiveclass;
 	}
 	
 	public static boolean receiveDocument(int socketNumber) {

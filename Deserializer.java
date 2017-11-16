@@ -21,7 +21,7 @@ public class Deserializer {
 	public static void main(String[] args) {
 		
 		System.out.println("Deserializer running. Waiting for Serializer to send document...");
-//		receiveDocument(SOCKETNUMBER);
+		receiveDocument(SOCKETNUMBER);
 		Document xmlDocument = readDocument();
 		System.out.println("Document received. Deserializing...");
 		Object object = deserialize(xmlDocument);

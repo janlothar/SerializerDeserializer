@@ -1,9 +1,11 @@
 import java.io.*;
 import java.net.*;
 import java.lang.reflect.*;
+import java.util.Arrays;
 import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.List;
-
+import java.util.Collection;
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
@@ -52,6 +54,8 @@ public class Deserializer {
 			case "ObjectReferenceArrayClass":
 				deserializedObject = deserializeObjectReferenceArrayClass(objectElement);
 				break;
+			case "ObjectReferenceCollectionClass":
+				deserializedObject = deserializeObjectReferenceCollectionClass(objectElement);
 			default:
 				return deserializedObject;
 			}
@@ -59,6 +63,33 @@ public class Deserializer {
 		
 		return deserializedObject;
 		
+	}
+	
+	public static Object deserializeObjectReferenceCollectionClass(Element objectElement) {
+		
+		List<Element> fieldReferencesSerialized = objectElement.getChild("field").getChildren();
+		
+		int idValue = Integer.parseInt(objectElement.getAttributeValue("id"));
+		
+		Object[] objectRefs = new Object[fieldReferencesSerialized.size()];
+		
+		for (int i = 0; i < objectRefs.length; i++) {
+			int value = Integer.parseInt(fieldReferencesSerialized.get(i).getText());
+			objectRefs[i] = IDMap.get(value);
+		}
+		
+		Collection<Object> objRefCollection = Arrays.asList(objectRefs);
+		
+		System.out.println("printing collection size:" + objRefCollection.size());
+		for (Object obj : objRefCollection) {
+			System.out.println(IDMap.containsValue(obj));
+		}
+		
+		ObjectReferenceCollectionClass objectColClass = new ObjectReferenceCollectionClass(objRefCollection);
+		
+		IDMap.put(objectColClass, idValue);
+		
+		return objectColClass;
 	}
 	
 	public static Object deserializeObjectReferenceArrayClass(Element objectElement) {

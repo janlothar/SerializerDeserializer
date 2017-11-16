@@ -80,14 +80,9 @@ public class Deserializer {
 		
 		Collection<Object> objRefCollection = Arrays.asList(objectRefs);
 		
-		System.out.println("printing collection size:" + objRefCollection.size());
-		for (Object obj : objRefCollection) {
-			System.out.println(IDMap.containsValue(obj));
-		}
-		
 		ObjectReferenceCollectionClass objectColClass = new ObjectReferenceCollectionClass(objRefCollection);
 		
-		IDMap.put(objectColClass, idValue);
+		IDMap.put(idValue, objectColClass);
 		
 		return objectColClass;
 	}
@@ -105,14 +100,9 @@ public class Deserializer {
 			objectRefs[i] = IDMap.get(value);
 		}
 		
-		System.out.println("printing array size:" + objectRefs.length);
-		for (Object obj : objectRefs) {
-			System.out.println(IDMap.containsValue(obj));
-		}
-		
 		ObjectReferenceArrayClass objectArrClass = new ObjectReferenceArrayClass(objectRefs);
 		
-		IDMap.put(objectArrClass, idValue);
+		IDMap.put(idValue, objectArrClass);
 		
 		return objectArrClass;
 	}
@@ -127,7 +117,7 @@ public class Deserializer {
 		
 		ObjectReferenceClass objectRefClass = new ObjectReferenceClass(IDMap.get(refValue));
 		
-		IDMap.put(objectRefClass, idValue);
+		IDMap.put(idValue, objectRefClass);
 		
 		return objectRefClass;
 	}
@@ -147,7 +137,7 @@ public class Deserializer {
 		
 		PrimitiveArrayClass primitiveArrayClass = new PrimitiveArrayClass(fieldValues);
 		
-		IDMap.put(primitiveArrayClass, idValue);
+		IDMap.put(idValue, primitiveArrayClass);
 		
 		return primitiveArrayClass;
 	}
@@ -175,7 +165,9 @@ public class Deserializer {
 		primitiveclass.floatPrimitive = Float.parseFloat(fieldValues[6]);
 		primitiveclass.doublePrimitive = Double.parseDouble(fieldValues[7]);
 		
-		IDMap.put(primitiveclass, idValue);
+		System.out.println("Putting primitive class in " + idValue);
+		
+		IDMap.put(idValue, primitiveclass);
 		
 		return primitiveclass;
 	}

@@ -175,8 +175,6 @@ public class Deserializer {
 		primitiveclass.floatPrimitive = Float.parseFloat(fieldValues[6]);
 		primitiveclass.doublePrimitive = Double.parseDouble(fieldValues[7]);
 		
-		System.out.println("Putting primitive class in " + idValue);
-		
 		IDMap.put(idValue, primitiveclass);
 		
 		return primitiveclass;
@@ -270,6 +268,10 @@ public class Deserializer {
 						fieldDetails[i] = unpackObjArray(fieldDetails[i], fieldValue);
 					}
 				}
+				else if (fieldValue instanceof Collection) {
+					System.out.println("Found collection!");
+					fieldDetails[i] = unpackObjCollection(fieldDetails[i], fieldValue);
+				}
 			}catch(IllegalAccessException e) {
 				//converting stack trace to string uses code from this tutorial: 
 				//	http://www.baeldung.com/java-stacktrace-to-string
@@ -303,5 +305,11 @@ public class Deserializer {
 	        currentInfo += "\n\t\t\t\t\t["+i+"]:" + elementUnpack.getClass() + " hash code:" + elementUnpack.getClass().hashCode();
 	    }
 	    return currentInfo;
+	}
+	
+	public static String unpackObjCollection(String currentInfo, Object collection) {
+		
+		Object[] containedValues = ((Collection)collection).toArray();
+		return unpackObjArray(currentInfo, containedValues);
 	}
 }

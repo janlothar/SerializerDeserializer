@@ -105,6 +105,11 @@ public class Deserializer {
 			objectRefs[i] = IDMap.get(value);
 		}
 		
+		System.out.println("printing array size:" + objectRefs.length);
+		for (Object obj : objectRefs) {
+			System.out.println(IDMap.containsValue(obj));
+		}
+		
 		ObjectReferenceArrayClass objectArrClass = new ObjectReferenceArrayClass(objectRefs);
 		
 		IDMap.put(objectArrClass, idValue);

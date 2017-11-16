@@ -80,10 +80,6 @@ public class Deserializer {
 		
 		char[] fieldValues = new char[fieldValuesSerialized.size()];
 		
-		System.out.println(objectElement.getChildren().toString());
-		
-		System.out.println(fieldValues.length);
-		
 		for (int i = 0; i < fieldValues.length; i++) {
 			char value = fieldValuesSerialized.get(i).getText().charAt(0);
 			fieldValues[i] = value;

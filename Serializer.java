@@ -6,6 +6,8 @@ import org.jdom2.output.XMLOutputter;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.IdentityHashMap;
@@ -46,7 +48,7 @@ public class Serializer {
 				+ "\t2. An object that contains a reference to another object\n"
 				+ "\t3. An object that contains an array of primitives\n"
 				+ "\t4. An object that contains an array of object references\n"
-//				+ "\t5. An object that uses an instance of Java's collection classes to refer to several other objects\n
+				+ "\t5. An object that uses an instance of Java's collection classes to refer to several other objects\n"
 				);
 		
 		System.out.printf("Choose: ");
@@ -60,8 +62,8 @@ public class Serializer {
 			break;
 			
 		case 2:
-			System.out.printf("Creating object with reference to another class\n"
-					+ "Press enter to configure referenced class\n(ENTER)\n");
+			System.out.printf("Creating object with reference to another object\n"
+					+ "Press enter to configure referenced object\n(ENTER)\n");
 			keyboard = new Scanner(System.in);
 			keyboard.nextLine();
 			objectList.add(createReferenceObject());
@@ -73,15 +75,27 @@ public class Serializer {
 			break;
 			
 		case 4:
-			System.out.printf("Creating object array with references to another class\n"
-					+ "Press enter to configure referenced classes\n(ENTER)\n");
+			System.out.printf("Creating object array with references to other objects\n"
+					+ "Press enter to configure referenced objects\n(ENTER)\n");
 			keyboard = new Scanner(System.in);
 			keyboard.nextLine();
 			Object[] objectArray = createObjectArray();
-			objectList.add(objectArray);
+			Object refArrClass = new ObjectReferenceArrayClass(objectArray);
+			objectList.add(refArrClass);
 			for (int i = 0; i < objectArray.length; i++) {
 				objectList.add(objectArray[i]);
 			}
+			break;
+			
+		case 5:
+			System.out.printf("Creating object collection with references to other objects\n"
+					+ "Press enter to configure referenced objects\n(ENTER)\n");
+			keyboard = new Scanner(System.in);
+			keyboard.nextLine();
+			Collection<Object> objectCollection = Arrays.asList(createObjectArray());			
+			Object refColClass = new ObjectReferenceCollectionClass(objectCollection);
+			objectList.add(refColClass);
+			objectList.addAll(objectCollection);
 			break;
 			
 		default:
@@ -262,6 +276,14 @@ public class Serializer {
 			case "PrimitiveArrayClass":
 				objectElement = createPrimitiveArrayClassElement(obj);
 				break;
+				
+			case "ObjectReferenceArrayClass":
+				objectElement = createObjectReferenceArrayElement(obj);
+				break;
+				
+			case "ObjectReferenceCollectionClass":
+				objectElement = createObjectReferenceCollectionElement(obj);
+				break;
 
 			default:
 				objectElement = createPrimitiveClassElement(obj);
@@ -283,6 +305,94 @@ public class Serializer {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static org.jdom2.Element createObjectReferenceCollectionElement(Object obj) {
+		
+		Element objectElement = new Element("object");
+		Attribute className = new Attribute("name", obj.getClass().getName());
+		Attribute classID = new Attribute("id", IDMap.get(obj).toString());
+		objectElement.setAttribute(className).setAttribute(classID);
+		
+		//add fields
+		Field[] fields = obj.getClass().getDeclaredFields();
+		for (int i = 0; i < fields.length; i++) {
+			fields[i].setAccessible(true);
+			String fieldName = fields[i].getName();
+			String declaringClass = fields[i].getDeclaringClass().getName();
+			Object fieldCollection;
+			try {
+				fieldCollection = fields[i].get(obj);
+			} catch (IllegalAccessException e) {
+				fieldCollection = "ErrorAccessingString";
+			}
+			
+			Object fieldArray = ((Collection)fieldCollection).toArray();
+			
+			Element field = new Element("field");
+			field.setAttribute("name", fieldName)
+				.setAttribute("declaringclass", declaringClass)
+				.setAttribute("length", Integer.toString(Array.getLength(fieldArray)));
+			
+			Object fieldArrayElement;
+	
+		    for(int j=0 ;j<Array.getLength(fieldArray); j++) {
+		        fieldArrayElement = Array.get(fieldArray, j);
+			    Element value = new Element("reference");
+			    String ID = IDMap.get(fieldArrayElement).toString();
+				value.addContent(ID);
+				field.addContent(value);
+		    }
+			
+			
+			objectElement.addContent(field);
+			
+		}
+		
+		return objectElement;
+	}
+	
+	public static org.jdom2.Element createObjectReferenceArrayElement(Object obj) {
+		
+		Element objectElement = new Element("object");
+		Attribute className = new Attribute("name", obj.getClass().getName());
+		Attribute classID = new Attribute("id", IDMap.get(obj).toString());
+		objectElement.setAttribute(className).setAttribute(classID);
+		
+		//add fields
+		Field[] fields = obj.getClass().getDeclaredFields();
+		for (int i = 0; i < fields.length; i++) {
+			fields[i].setAccessible(true);
+			String fieldName = fields[i].getName();
+			String declaringClass = fields[i].getDeclaringClass().getName();
+			Object fieldArray;
+			try {
+				fieldArray = fields[i].get(obj);
+			} catch (IllegalAccessException e) {
+				fieldArray = "ErrorAccessingString";
+			}
+			
+			Element field = new Element("field");
+			field.setAttribute("name", fieldName)
+				.setAttribute("declaringclass", declaringClass)
+				.setAttribute("length", Integer.toString(Array.getLength(fieldArray)));
+			
+			Object fieldArrayElement;
+	
+		    for(int j=0 ;j<Array.getLength(fieldArray); j++) {
+		        fieldArrayElement = Array.get(fieldArray, j);
+			    Element value = new Element("reference");
+			    String ID = IDMap.get(fieldArrayElement).toString();
+				value.addContent(ID);
+				field.addContent(value);
+		    }
+			
+			
+			objectElement.addContent(field);
+			
+		}
+		
+		return objectElement;
 	}
 	
 	public static org.jdom2.Element createPrimitiveClassElement(Object obj){

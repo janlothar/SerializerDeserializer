@@ -218,7 +218,7 @@ public class Deserializer {
 		Class classToInspect = obj.getClass();
 		
 		//get class details
-		String className = getClassName(classToInspect);
+		String className = classToInspect.getName();
 		String[] fieldDetails = getFieldDetails(obj);
 		
 		//print class details
@@ -234,14 +234,7 @@ public class Deserializer {
 			}
 		}
     }
-	
-	
-	public static String getClassName(Class toInspect) {
-		
-		String className = toInspect.getName();
-		return className;
-	}
-	
+
 	public static String[] getFieldDetails(Object toInspect) {
 		
 		Field[] fields = toInspect.getClass().getDeclaredFields();

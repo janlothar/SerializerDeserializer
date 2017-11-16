@@ -20,14 +20,6 @@ public class Deserializer {
 		System.out.println("Document received. Deserializing...");
 		Object object = deserialize(xmlDocument);
 		inspect(object);
-		
-//		DEBUG CHECK PRODUCED DOCUMENT
-//		try {
-//			XMLOutputter xmlOutput = new XMLOutputter(Format.getPrettyFormat());
-//			xmlOutput.output(xmlDocument, new FileOutputStream(new File("TEST.xml")));
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
 
 	}
 	

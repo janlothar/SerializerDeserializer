@@ -77,8 +77,10 @@ public class Serializer {
 					+ "Press enter to configure referenced object\n(ENTER)\n");
 			keyboard = new Scanner(System.in);
 			keyboard.nextLine();
-			objectList.add(createReferenceObject());
-			objectList.add(new ObjectReferenceClass(objectList.get(0)));
+			Object refObject = createReferenceObject();
+			Object obj = new ObjectReferenceClass(refObject);
+			objectList.add(obj);
+			objectList.add(refObject);
 			break;
 			
 		case 3:

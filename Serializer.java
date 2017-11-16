@@ -63,7 +63,7 @@ public class Serializer {
 			System.out.printf("Creating object with reference to another class\nPress enter to configure referenced class\n(ENTER)\n");
 			keyboard = new Scanner(System.in);
 			keyboard.nextLine();
-			objectList.add(createPrimitiveClass());
+			objectList.add(createReferenceObject());
 			objectList.add(new ObjectReferenceClass(objectList.get(0)));
 			break;
 			
@@ -77,7 +77,35 @@ public class Serializer {
 			break;
 		}
 		
+		
 		return objectList;
+	}
+	
+	public static Object createReferenceObject() {
+		
+		boolean choosing = true;
+		
+		while (choosing) {
+			System.out.printf("What kind of object would you like to reference?\n"
+					+ "\t1. A simple object with only primitives for variables\n"
+					+ "\t2.An object that contains an array of primitives\n"
+					);
+			Scanner keyboard = new Scanner(System.in);
+			int choice = keyboard.nextInt();
+
+			switch (choice) {
+			case 1:
+				return createPrimitiveClass();
+			case 2:
+				return createPrimitiveArrayClass();
+			default:
+				System.out.println("Invalid choice");
+				break;
+			}
+		}
+		
+		System.out.println("Should have never reached here");
+		return createPrimitiveClass();
 	}
 	
 	public static Object createPrimitiveArrayClass() {
@@ -86,6 +114,7 @@ public class Serializer {
 		Scanner keyboard = new Scanner(System.in);
 		String input = keyboard.nextLine();
 		PrimitiveArrayClass primitiveArrayClass = new PrimitiveArrayClass(input.toCharArray());
+		
 		return primitiveArrayClass;
 	}
 	

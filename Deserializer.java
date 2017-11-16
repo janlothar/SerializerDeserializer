@@ -44,6 +44,10 @@ public class Deserializer {
 			case "ObjectReferenceClass":
 				deserializedObject = deserializeObjectReferenceClass(objectElement);
 				break;
+				
+			case "PrimitiveArrayClass":
+				deserializedObject = deserializePrimitiveArrayClass(objectElement);
+				break;
 			default:
 				return deserializedObject;
 			}
@@ -66,6 +70,30 @@ public class Deserializer {
 		IDMap.put(objectRefClass, idValue);
 		
 		return objectRefClass;
+	}
+	
+	public static Object deserializePrimitiveArrayClass(Element objectElement) {
+		
+		List<Element> fieldValuesSerialized = objectElement.getChild("field").getChildren();
+		
+		int idValue = Integer.parseInt(objectElement.getAttributeValue("id"));
+		
+		char[] fieldValues = new char[fieldValuesSerialized.size()];
+		
+		System.out.println(objectElement.getChildren().toString());
+		
+		System.out.println(fieldValues.length);
+		
+		for (int i = 0; i < fieldValues.length; i++) {
+			char value = fieldValuesSerialized.get(i).getText().charAt(0);
+			fieldValues[i] = value;
+		}
+		
+		PrimitiveArrayClass primitiveArrayClass = new PrimitiveArrayClass(fieldValues);
+		
+		IDMap.put(primitiveArrayClass, idValue);
+		
+		return primitiveArrayClass;
 	}
 	
 	public static Object deserializePrimitiveClass(Element objectElement) {

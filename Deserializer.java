@@ -10,12 +10,14 @@ import org.jdom2.output.XMLOutputter;
 
 public class Deserializer {
 	
-	int SOCKETNUMBER = 1999;
+	static int SOCKETNUMBER = 1999;
 
 	public static void main(String[] args) {
 		
-//		receiveDocument(SOCKETNUMBER);
+		System.out.println("Deserializer running. Waiting for Serializer to send document...");
+		receiveDocument(SOCKETNUMBER);
 		Document xmlDocument = readDocument();
+		System.out.println("Document received. Deserializing...");
 		Object object = deserialize(xmlDocument);
 		inspect(object);
 		

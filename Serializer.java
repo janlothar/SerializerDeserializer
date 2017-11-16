@@ -27,16 +27,27 @@ public class Serializer {
 			addToMap(obj);
 		}
 		//serialize
-		Document xml = serialize(objList);	
-		//write to file for viewing
-		writeDocument(xml);
+		Document xml = serialize(objList);
 		//prompt user to start deserializer
-		System.out.printf("About to send document over network through socket %d\n"
-				+ "please make sure deserializer is running and then press enter\n(ENTER)\n", SOCKETNUMBER);
+		System.out.printf("Objects have been serialized, what would you like to do with the document?\n"
+				+ "\t1. Save to file\n"
+				+ "\t2. Save to file and send over network using socket number %d\n", SOCKETNUMBER);
 		Scanner keyboard = new Scanner(System.in);
-		keyboard.nextLine();
-		//send document
-//		sendDocument(1999);
+		int choice = keyboard.nextInt();
+		
+		switch (choice) {
+		case 1:
+			writeDocument(xml);
+			break;
+		case 2:
+			writeDocument(xml);
+			sendDocument(SOCKETNUMBER);
+			break;
+		default:
+			System.out.println("Invalid choice, defaulting to saving to file");
+			writeDocument(xml);
+			break;
+		}
 	}
 	
 	public static List<Object> userChoices() {

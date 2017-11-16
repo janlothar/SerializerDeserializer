@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.lang.reflect.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
@@ -15,6 +16,7 @@ public class Deserializer {
 	
 	static int SOCKETNUMBER = 1999;
 	static IdentityHashMap IDMap = new IdentityHashMap();
+	static Collection<Object> objectList = new ArrayList<Object>();
 
 	public static void main(String[] args) {
 		
@@ -23,7 +25,9 @@ public class Deserializer {
 		Document xmlDocument = readDocument();
 		System.out.println("Document received. Deserializing...");
 		Object object = deserialize(xmlDocument);
-		inspect(object);
+		for (Object obj : objectList) {
+			inspect(obj);
+		}
 
 	}
 	
@@ -41,21 +45,27 @@ public class Deserializer {
 			switch (objectType) {
 			case "PrimitiveClass":
 				deserializedObject = deserializePrimitiveClass(objectElement);
+				objectList.add(deserializedObject);
 				break;
 				
 			case "ObjectReferenceClass":
 				deserializedObject = deserializeObjectReferenceClass(objectElement);
+				objectList.add(deserializedObject);
 				break;
 				
 			case "PrimitiveArrayClass":
 				deserializedObject = deserializePrimitiveArrayClass(objectElement);
+				objectList.add(deserializedObject);
 				break;
 				
 			case "ObjectReferenceArrayClass":
 				deserializedObject = deserializeObjectReferenceArrayClass(objectElement);
+				objectList.add(deserializedObject);
 				break;
 			case "ObjectReferenceCollectionClass":
 				deserializedObject = deserializeObjectReferenceCollectionClass(objectElement);
+				objectList.add(deserializedObject);
+				break;
 			default:
 				return deserializedObject;
 			}
@@ -219,10 +229,12 @@ public class Deserializer {
 		
 		//get class details
 		String className = classToInspect.getName();
+		String hashCode = "" + classToInspect.hashCode();
 		String[] fieldDetails = getFieldDetails(obj);
 		
 		//print class details
-		System.out.println("Class name: " + className);
+		System.out.println("\nClass name: " + className);
+		System.out.println("Hash code: " + hashCode);
 
 		//print field details
 		System.out.println("\nFields: ");
@@ -249,6 +261,15 @@ public class Deserializer {
 			try {
 				Object fieldValue = fields[i].get(toInspect);
 				fieldDetails[i] += (" = " + fieldValue);
+				if (fieldValue.getClass().isArray()) {
+					String type = fieldValue.getClass().getTypeName();
+					if (type.equals("char[]")) {
+						fieldDetails[i] = unpackPrimArray(fieldDetails[i], fieldValue);
+					}
+					else {
+						fieldDetails[i] = unpackObjArray(fieldDetails[i], fieldValue);
+					}
+				}
 			}catch(IllegalAccessException e) {
 				//converting stack trace to string uses code from this tutorial: 
 				//	http://www.baeldung.com/java-stacktrace-to-string
@@ -260,5 +281,27 @@ public class Deserializer {
 		}
 		
 		return fieldDetails;
+	}
+	
+	public static String unpackPrimArray(String currentInfo, Object array) {
+		
+		Object elementUnpack;
+		currentInfo += "\n\t\t\t\tvalues:";
+	    for(int i=0; i<Array.getLength(array); i++) {
+	        elementUnpack = Array.get(array, i);
+	        currentInfo += "\n\t\t\t\t\t["+i+"]:" + elementUnpack;
+	    }
+	    return currentInfo;
+	}
+	
+	public static String unpackObjArray(String currentInfo, Object array) {
+		
+		Object elementUnpack;
+		currentInfo += "\n\t\t\t\tvalues:";
+	    for(int i=0; i<Array.getLength(array); i++) {
+	        elementUnpack = Array.get(array, i);
+	        currentInfo += "\n\t\t\t\t\t["+i+"]:" + elementUnpack.getClass() + " hash code:" + elementUnpack.getClass().hashCode();
+	    }
+	    return currentInfo;
 	}
 }

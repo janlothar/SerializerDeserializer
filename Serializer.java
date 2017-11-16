@@ -68,10 +68,7 @@ public class Serializer {
 			break;
 			
 		case 3:
-			System.out.println("Enter a line of characters. These characters will be added to the char array");
-			keyboard = new Scanner(System.in);
-			String input = keyboard.nextLine();
-			objectList.add(new PrimitiveArrayClass(input.toCharArray()));
+			objectList.add(createPrimitiveArrayClass());
 			break;
 			
 		default:
@@ -81,6 +78,15 @@ public class Serializer {
 		}
 		
 		return objectList;
+	}
+	
+	public static Object createPrimitiveArrayClass() {
+		
+		System.out.println("Enter a line of characters. These characters will be added to the char array");
+		Scanner keyboard = new Scanner(System.in);
+		String input = keyboard.nextLine();
+		PrimitiveArrayClass primitiveArrayClass = new PrimitiveArrayClass(input.toCharArray());
+		return primitiveArrayClass;
 	}
 	
 	public static Object createPrimitiveClass() {
@@ -310,7 +316,9 @@ public class Serializer {
 			}
 			
 			Element field = new Element("field");
-			field.setAttribute("name", fieldName).setAttribute("declaringclass", declaringClass).setAttribute("length", Integer.toString(Array.getLength(fieldArray)));
+			field.setAttribute("name", fieldName)
+				.setAttribute("declaringclass", declaringClass)
+				.setAttribute("length", Integer.toString(Array.getLength(fieldArray)));
 			
 			Object fieldArrayElement;
 	
